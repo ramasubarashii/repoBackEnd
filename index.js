@@ -3,18 +3,26 @@ const express = require ('express');
 const app = express();
 const port = 3000;
 const bodyParser = require('body-parser')
+const db = require('./connection')
+const response = require('./response')
 
 app.use(bodyParser.json())
 
 // routing
 // app.method(path, handler);
 app.get("/", (req, res) => {
-    res.send("hello world");
+    db.query("select * from nama_mahasiswa", (err, results) => {
+        // hasil data dari mysql
+        response(200, results,"get all data from mahasiswa", res)
+        })
 })
 
-app.get("/name", (req, res) => {
-    console.log({urlParam: req.query})
-    res.send("hello world bro");
+app.get("/find", (req, res) => {
+    const sql = `select * from nama_mahasiswa where npm = '${req.query.npm}'`
+    console.log('find npm: ', req.query.npm)
+    db.query(sql, (err, results) => {
+        response(200, results, "find data from mahasiswa", res)
+    })
 })
 
 app.put('/username', (req, res) => {
